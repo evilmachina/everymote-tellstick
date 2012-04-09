@@ -1,0 +1,18 @@
+{ "name" : "everymote-telldus"
+, "version" : "0.0.1"
+, "description" : "Everymote integration for Telldus TellStick and TellStick Duo"
+, "author": {
+       "name": "Marcus Olsson",
+       "email": "marcus.h.olsson@gmail.com",
+       "web": "http://www.everymote.com",
+       "twitter": "_macke_"}
+, "license": "MIT"
+, "main": "./telldus"
+,"dependencies": { 
+                "socket.io-client":"",
+                "tellduscore":"https://evilmachina@github.com/evilmachina/node-telldus-core.git" 
+        }
+,"bin": {
+    "everymote-telldus": "bin/everymote.js"
+  }
+}
