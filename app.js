@@ -1,5 +1,5 @@
 var io = require('socket.io-client'),
-   var telldus = require('./telldus');
+    telldus = require('tellduscore');
 
 var port = '80',
         server =  'm.everymote.com';
@@ -42,16 +42,35 @@ var connectThing = function(thing){
                 console.log('disconnected');
         }).on('reconnect', function () {
                console.log('reconnect');
-               socket.emit('setup', thing.settings); 
+             
         });
 };
 
 var connectThings = function (things){
         things.map(connectThing);
-};      
-//telldus.getDevices()
-tellstick.getThings(connectThings);
+}; 
 
+var build = function (tdThing){
+
+     tdThing.settings = { 
+                "name":tdThing.name,
+                "id":tdThing.id,
+                "quickAction":{"button":"switch"},
+                "functions":[{"button":"On"}, {"button":"Off"}]
+        };      
+
+
+
+       return tdThing;
+};
+
+var createThing = function(tdThings){
+        var things = tdThings.map(build);
+        connectThings(things);
+};     
+
+var tdThings = telldus.getDevices();
+createThing(tdThings);
 
 process.on('uncaughtException', function(err){
         console.log('Something bad happened: ' + err);

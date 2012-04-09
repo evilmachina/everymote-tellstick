@@ -1,4 +1,4 @@
-{ "name" : "everymote-telldus"
+{ "name" : "everymote-tellstick"
 , "version" : "0.0.1"
 , "description" : "Everymote integration for Telldus TellStick and TellStick Duo"
 , "author": {
@@ -7,12 +7,12 @@
        "web": "http://www.everymote.com",
        "twitter": "_macke_"}
 , "license": "MIT"
-, "main": "./telldus"
+, "main": "./app"
 ,"dependencies": { 
-                "socket.io-client":"",
-                "tellduscore":"https://evilmachina@github.com/evilmachina/node-telldus-core.git" 
+                "socket.io-client":"git://github.com/kazuyukitanimura/socket.io-client.git",
+                "tellduscore":"https://github.com/evilmachina/node-telldus-core/tarball/master" 
         }
 ,"bin": {
-    "everymote-telldus": "bin/everymote.js"
+    "everymote-tellstick": "bin/everymote.js"
   }
 }
