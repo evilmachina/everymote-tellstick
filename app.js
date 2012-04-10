@@ -50,13 +50,30 @@ var connectThings = function (things){
         things.map(connectThing);
 }; 
 
+//'TURNON', 'TURNOFF', 'DIM'
+var getFunctions = function(metods){
+        var functions = [];
+
+        if (metods.indexOf('TURNON') != -1) {
+                functions.push({"button":"On"});
+        }
+        if (metods.indexOf('TURNOFF') != -1) {
+                functions.push({"button":"Off"});
+        }
+        if (metods.indexOf('DIM') != -1){
+                functions.push({"button":"+"});
+                functions.push({"button":"-"});
+        }
+      return functions;
+};
+
 var build = function (tdThing){
 
      tdThing.settings = { 
                 "name":tdThing.name,
                 "id":tdThing.id,
                 "quickAction":{"button":"switch"},
-                "functions":[{"button":"On"}, {"button":"Off"}]
+                "functions":  getFunctions(tdThing.metods)
         };      
 
 
