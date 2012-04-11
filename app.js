@@ -13,7 +13,7 @@ var connectThing = function(thing){
                         ,'reconnection delay': 500
                         ,'max reconnection attempts': 10});
         
-        var lampOn = false;
+       
         socket.on('connect', function () {
                 console.log('connected');
                 socket.emit('setup', thing.settings);
@@ -67,6 +67,8 @@ var getFunctions = function(metods){
       return functions;
 };
 
+var handleAction
+
 var build = function (tdThing){
 
      tdThing.settings = { 
@@ -75,8 +77,38 @@ var build = function (tdThing){
                 "quickAction":{"button":"switch"},
                 "functions":  getFunctions(tdThing.metods)
         };      
+      var lampOn = false;
+      var dimLevl = 0;
+      tdThing.handleAction = function(action){
+        if (action === 'On') {
+              telldus.turnOn(tdThing.id);
+              lampOn = true;  
+        }
+        else if (action === 'Off'){
+                telldus.turnOff(tdThing.id);
+                lampOn = false;
+        }
+        else if (action === '+'){
+                dimLevl = dimLevl < 255 ? dimLevl + 51 : 255;
+                telldus.dim(tdThing.id, dimLevl);
+                      
+                lampOn = true; 
+        }
+        else if (action === '-'){
+                dimLevl = dimLevl > 0 ? dimLevl - 51 : 0;
+                telldus.dim(tdThing.id, dimLevl);
+                lampOn = true; 
+        }
+        else if (action === 'switch'){
+                if(lampOn){
+                        telldus.turnOff(tdThing.id);
+                }else{
+                        telldus.turnOn(tdThing.id);
+                }
+                lampOn = !lampOn; 
+        }
 
-
+      };
 
        return tdThing;
 };
