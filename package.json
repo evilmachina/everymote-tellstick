@@ -10,7 +10,7 @@
 ,"license": "MIT"
 ,"main": "./app"
 ,"dependencies": { 
-                "socket.io-client":"git://github.com/kazuyukitanimura/socket.io-client.git",
+                "socket.io-client":"",
                 "tellduscore":"git://github.com/evilmachina/node-telldus-core.git" 
         }
 ,"repository":{
