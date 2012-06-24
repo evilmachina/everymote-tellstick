@@ -2,7 +2,7 @@ var io = require('socket.io-client'),
     telldus = require('tellduscore');
 
 var port = '80',
-        server =  'm.everymote.com';
+        server =  'thing.everymote.com';
 
 
 var connectThing = function(thing){
@@ -10,32 +10,16 @@ var connectThing = function(thing){
         var socket = io.connect('http://' + server + ':' + port + '/thing',
                 {"force new connection":true 
                         ,'reconnect': true
-                        ,'reconnection delay': 500
-                        ,'max reconnection attempts': 10});
+                        ,'reconnection delay': 5000
+                        ,'max reconnection attempts': 100000000000000000});
         
-       
+        thing.socket = socket;
         socket.on('connect', function () {
                 console.log('connected');
                 socket.emit('setup', thing.settings);
         }).on('doAction', function (action) {
                 console.log(action);
                 thing.handleAction(action);
-                /*
-                if(action == "On"){
-                        tellstick.turnOn(thing);
-                        lampOn = true;
-                }else if(action== "Off"){
-                        tellstick.turnOff(thing);
-                        lampOn = false;
-                }else{
-                        if(lampOn){
-                                tellstick.turnOff(thing);
-
-                        }else{
-                                tellstick.turnOn(thing);
-                        }
-                        lampOn = !lampOn;
-                }*/
         }).on('connect_failed', function () {
                 console.log('error:' + socket );
         }).on('disconnect', function () {
@@ -51,55 +35,49 @@ var connectThings = function (things){
 }; 
 
 //'TURNON', 'TURNOFF', 'DIM'
-var getFunctions = function(metods){
-        var functions = [];
+var getActionControles = function(metods){
+        var actionControles = [];
 
         if (metods.indexOf('TURNON') != -1) {
-                functions.push({"button":"On"});
+
+                actionControles.push({"type":"button", "name":"On", "id":"1"});
         }
         if (metods.indexOf('TURNOFF') != -1) {
-                functions.push({"button":"Off"});
+                actionControles.push({"type":"button", "name":"Off", "id":"0"});
         }
         if (metods.indexOf('DIM') != -1){
-                functions.push({"button":"+"});
-                functions.push({"button":"-"});
+                actionControles.push({"type":"range", "name":"Dim", "id":"2", "min":0, "max":255, "curentState":255});
         }
-      return functions;
+      return actionControles;
 };
-
-var handleAction
 
 var build = function (tdThing){
 
      tdThing.settings = { 
                 "name":tdThing.name,
                 "id":tdThing.id,
-                "quickAction":{"button":"switch"},
-                "functions":  getFunctions(tdThing.metods)
+                "quickAction":{"type":"button", "name":"Switch", "id":"switch"},
+                "actionControles":  getActionControles(tdThing.metods)
         };      
       var lampOn = false;
       var dimLevl = 0;
       tdThing.handleAction = function(action){
-        if (action === 'On') {
+        if (action.id === '1') {
               telldus.turnOn(tdThing.id);
               lampOn = true;  
         }
-        else if (action === 'Off'){
+        else if (action.id === '0'){
                 telldus.turnOff(tdThing.id);
                 lampOn = false;
         }
-        else if (action === '+'){
-                dimLevl = dimLevl < 255 ? dimLevl + 51 : 255;
-                telldus.dim(tdThing.id, dimLevl);
-                      
+        else if (action.id === '2'){
+                dimLevl = action.value;
+                tdThing.socket.emit('updateActionControlerState', {"id":action.id, "curentState":dimLevl});
+                telldus.dim(tdThing.id, parseInt(dimLevl,10));
                 lampOn = true; 
+               
         }
-        else if (action === '-'){
-                dimLevl = dimLevl > 0 ? dimLevl - 51 : 0;
-                telldus.dim(tdThing.id, dimLevl);
-                lampOn = true; 
-        }
-        else if (action === 'switch'){
+        else if (action.id === 'switch'){
                 if(lampOn){
                         telldus.turnOff(tdThing.id);
                 }else{
@@ -118,10 +96,14 @@ var createThing = function(tdThings){
         connectThings(things);
 };     
 
-var tdThings = telldus.getDevices();
-createThing(tdThings);
+//exports.start = function(){
+    var tdThings = telldus.getDevices();
+	createThing(tdThings);
+	 console.log("end");
+//}
 
 process.on('uncaughtException', function(err){
-        console.log('Something bad happened: ' + err);
-        process.exit(0);
+        console.log('Something bad happened: ');
+        console.log(err);
+        process.exit(1);
 });
