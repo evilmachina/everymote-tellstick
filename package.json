@@ -11,7 +11,7 @@
 ,"main": "./app"
 ,"dependencies": { 
                 "socket.io-client":"",
-                "tellduscore":"git://github.com/evilmachina/node-telldus-core.git" 
+                "telldus-core-js":"" 
         }
 ,"repository":{
         "type": "git"
