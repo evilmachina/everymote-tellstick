@@ -1,5 +1,5 @@
 var io = require('socket.io-client'),
-    telldus = require('tellduscore');
+    telldus = require('telldus-core-js');
 
 var port = '80',
         server =  'thing.everymote.com';
