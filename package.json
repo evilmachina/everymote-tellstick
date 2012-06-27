@@ -2,6 +2,7 @@
 , "version" : "0.0.2"
 , "description" : "Everymote integration for Telldus TellStick and TellStick Duo"
 , "keywords": ["telldus", "TellStick", "home automation", "everymote"]
+, "homepage" : "http://www.everymote.com"
 , "author": {
        "name": "Marcus Olsson",
        "email": "marcus.h.olsson@gmail.com",
